@@ -61,7 +61,7 @@ namespace Hooks
 			uintptr_t Relative = *reinterpret_cast<unsigned long*>(Pattern + 6);
 			Relative = (Pattern + 10) + Relative; // eip = instruction base + 5 + relative offset
 
-			return reinterpret_cast<void*>(Relative);
+			return nullptr;
 
 		}
 	}
