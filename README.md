@@ -1,3 +1,9 @@
+# YYToolkit for Loop Hero
+This is a modified version focused on developing mods for Loop Hero.
+It may or may not work well for other games but I recommend using the original version.
+
+Original README below
+
 # YYToolkit
 YYToolkit is a tool for creating mods and altering GameMaker games.
 
