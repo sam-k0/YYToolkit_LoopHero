@@ -343,7 +343,8 @@ namespace Launcher
             this.MinimumSize = new System.Drawing.Size(720, 380);
             this.Name = "MainWindow";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "YYToolkit Launcher (v2.1.0)";
+            this.Text = "YYToolkit Launcher (v2.1.0) for LoopHero (\"inofficial\")";
+            this.Load += new System.EventHandler(this.MainWindow_Load);
             this.gbSelectFiles.ResumeLayout(false);
             this.gbSelectFiles.PerformLayout();
             this.gbInject.ResumeLayout(false);

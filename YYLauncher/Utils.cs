@@ -133,7 +133,7 @@ namespace Launcher
 #pragma warning disable SYSLIB0014
 			using (var Browser = new WebClient())
 			{
-				string URL = "https://github.com/Archie-osu/YYToolkit/releases/latest/download/YYToolkit.dll";
+				string URL = "https://github.com/sam-k0/YYToolkit_LoopHero/releases/latest/download/YYToolkit.dll";
 
 				try
 				{
