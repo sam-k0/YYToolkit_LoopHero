@@ -16,6 +16,7 @@ using FNEventHandler = YYTKStatus(*)(YYTKEventBase* pEvent, void* Argument);
 using FNPluginEntry = YYTKStatus(*)(YYTKPlugin* pPluginObject);
 using FNPluginUnload = YYTKStatus(*)();
 using FNPluginPreloadEntry = YYTKStatus(*)(YYTKPlugin* pPluginObject);
+using FNGetPluginName = std::string(*)();
 
 #pragma pack(push, 1)
 
