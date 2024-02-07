@@ -174,7 +174,12 @@ YYTKPlugin* API::PluginManager::LoadPlugin(const wchar_t* Path)
 	if (lpPluginGetName)
 	{
 		// get name and check for list
-
+		std::string pluginName = lpPluginGetName();
+		if (!ModuleAllowed(pluginName))
+		{
+			FreeLibrary(PluginModule);
+			return nullptr;
+		}
 	}
 
 	// Emplace in map scope
@@ -279,7 +284,7 @@ void API::PluginManager::Initialize()
 		if (YYTKPlugin* p = LoadPlugin(entry.path().wstring().c_str()))
 			Utils::Logging::Message(CLR_GREEN, "[+] Loaded '%S' - mapped to 0x%p.", entry.path().filename().wstring().c_str(), p->PluginStart);
 		else
-			Utils::Logging::Message(CLR_RED, "[-] Failed to load '%S' - the file may not be a plugin.", entry.path().filename().wstring().c_str());
+			Utils::Logging::Message(CLR_RED, "[-] Did not load '%S'.", entry.path().filename().wstring().c_str());
 	}
 }
 

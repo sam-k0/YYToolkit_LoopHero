@@ -5,6 +5,7 @@
 #include "../Enums/Enums.hpp"
 #include <Windows.h>
 #include <dxgiformat.h>
+#include <string>
 
 struct CInstance;
 struct YYRValue;
