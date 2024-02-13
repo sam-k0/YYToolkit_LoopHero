@@ -124,7 +124,7 @@ YYTKStatus API::Internal::__InitializeConsole__()
 #if _DEBUG
 	Utils::Logging::Message(CLR_GOLD, "YYToolkit %s (Debug) by Archie#3274", YYSDK_VERSION);
 #else
-	Utils::Logging::Message(CLR_LIGHTBLUE, "YYToolkit by Archie#3274", YYSDK_VERSION);
+	Utils::Logging::Message(CLR_LIGHTBLUE, "YYToolkit %s by 'https://github.com/Archie-osu'\nYYToolkit for LoopHero %s", YYSDK_VERSION, YYSDKLH_VERSION);
 #endif
 
 	return YYTK_OK;

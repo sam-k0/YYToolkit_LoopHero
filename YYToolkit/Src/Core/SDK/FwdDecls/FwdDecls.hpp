@@ -79,6 +79,7 @@ typedef bool (*FNCodeExecute)(YYObjectBase* Self, YYObjectBase* Other, CCode* co
 #define YYTK_MAGIC 'TFSI'
 
 static const char* YYSDK_VERSION = "2.1.3";
+static const char* YYSDKLH_VERSION = "2.1.6";
 
 // Macros, but complicated
 #ifdef _MSC_VER
