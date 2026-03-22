@@ -3,6 +3,7 @@
 #include "../Plugins.hpp"
 #include <string>
 #include <vector>
+#include <list>
 
 #ifdef YYSDK_PLUGIN
 
@@ -105,4 +106,18 @@ YYTKStatus PmLoadPlugin(
 YYTKStatus PmUnloadPlugin(
 	void* pBaseAddress
 );
+
+YYTKStatus PmCreateCallbackEx(
+	IN PluginAttributes_t* PluginAttributes,
+	IN uint32_t CallbackPriority,
+	IN FNEventHandler Callback,
+	IN EventType EventTypes,
+	OPTIONAL IN PVOID Context,
+	OUT CallbackAttributes_t*& CallbackAttributes
+);
+
+void PmGetPluginStorage(
+	OUT std::list<PluginAttributes_t>*& List
+);
+
 #endif
