@@ -79,13 +79,13 @@ namespace Hooks
 				"DoCallScript"
 			);
 
-			Hook
+			/*Hook
 			(
 				ReCa<void*>(&Hooks::YYError::Function), 
 				ReCa<void*>(&Hooks::YYError::GetTargetAddress),	
 				ReCa<void**>(&Hooks::YYError::pfnOriginal),
 				"YYError"
-			);
+			);*/
 			
 			Hook
 			(
@@ -97,6 +97,7 @@ namespace Hooks
 
 			if (GetModuleHandleA("d3d11.dll"))
 			{
+				Utils::Logging::Message(CLR_GRAY, "- Game is using Direct3D11");
 				Hook
 				(
 					ReCa<void*>(Hooks::Present::Function),
@@ -116,6 +117,7 @@ namespace Hooks
 
 			else if (GetModuleHandleA("d3d9.dll"))
 			{
+				Utils::Logging::Message(CLR_GRAY, "- Game is using Direct3D9");
 				Hook
 				(
 					ReCa<void*>(Hooks::EndScene::Function),
