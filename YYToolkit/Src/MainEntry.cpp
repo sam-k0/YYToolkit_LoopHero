@@ -66,13 +66,13 @@ void __stdcall Main(HINSTANCE g_hDLL)
 	Utils::Logging::Message(CLR_LIGHTBLUE, "Initialization done!");
 
 	// Loop
-	while (true) 
+	/*while (true)
 	{
 		if (GetAsyncKeyState(VK_F10) & 1)
 			Console::DoCommand();
 
 		Sleep(5); 
-	}
+	}*/
 
 	// Unhook
 	/*Hooks::Uninitialize();
