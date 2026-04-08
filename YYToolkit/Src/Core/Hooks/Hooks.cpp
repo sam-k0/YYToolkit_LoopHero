@@ -78,14 +78,6 @@ namespace Hooks
 				ReCa<void**>(&Hooks::DoCallScript::pfnOriginal),
 				"DoCallScript"
 			);
-
-			/*Hook
-			(
-				ReCa<void*>(&Hooks::YYError::Function), 
-				ReCa<void*>(&Hooks::YYError::GetTargetAddress),	
-				ReCa<void**>(&Hooks::YYError::pfnOriginal),
-				"YYError"
-			);*/
 			
 			Hook
 			(
@@ -132,19 +124,5 @@ namespace Hooks
 			ShowWindow(API::gAPIVars.Globals.g_hwWindowHandle, SW_SHOWNORMAL);
 			SetForegroundWindow(API::gAPIVars.Globals.g_hwWindowHandle);
 		}
-	}
-
-	void Uninitialize()
-	{
-		MH_DisableHook(MH_ALL_HOOKS);
-		Sleep(100);
-		MH_Uninitialize();
-
-		SetWindowLongPtr(API::gAPIVars.Globals.g_hwWindowHandle, GWLP_WNDPROC, reinterpret_cast<uintptr_t>(Hooks::WindowProc::pfnOriginal));
-
-		if (API::gAPIVars.Globals.g_pRenderView)
-			API::gAPIVars.Globals.g_pRenderView->Release();
-
-		API::gAPIVars.Globals.g_pRenderView = nullptr;
 	}
 }

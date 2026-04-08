@@ -64,26 +64,6 @@ void __stdcall Main(HINSTANCE g_hDLL)
 	Hooks::Initialize();
 
 	Utils::Logging::Message(CLR_LIGHTBLUE, "Initialization done!");
-
-	// Loop
-	/*while (true)
-	{
-		if (GetAsyncKeyState(VK_F10) & 1)
-			Console::DoCommand();
-
-		Sleep(5); 
-	}*/
-
-	// Unhook
-	/*Hooks::Uninitialize();
-
-	// Unload all plugins
-	Internal::__Unload__();
-
-	SetUnhandledExceptionFilter(NULL);
-
-	// Actually unload the library
-	FreeLibraryAndExitThread(g_hDLL, 0);*/
 }
 
 int __stdcall DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
