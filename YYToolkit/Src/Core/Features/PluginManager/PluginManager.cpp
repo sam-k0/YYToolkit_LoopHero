@@ -84,30 +84,6 @@ namespace Filesys {
 	}
 }
 
-// Checks if the module is allowed or not
-bool ModuleAllowed(std::string modName)
-{
-	std::string blacklistedModsPath = Filesys::GetCurrentDir() + "\\" + gModBlacklist;
-	if (Filesys::FileExists(blacklistedModsPath))
-	{
-		std::vector<std::string> blacklistedModsNames = Filesys::ReadFromFile(blacklistedModsPath);
-		if (VectorContains(modName, &blacklistedModsNames)) // Blacklisted
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-	}
-	else
-	{
-		std::ofstream file(blacklistedModsPath); // Create file without specifying content
-		file.close();
-		return true;
-	}
-
-}
 
 YYTKPlugin* API::PluginManager::LoadPlugin(const wchar_t* Path)
 {
@@ -165,17 +141,6 @@ YYTKPlugin* API::PluginManager::LoadPlugin(const wchar_t* Path)
 		int Result = MessageBoxW(0, AlertMessage.c_str(), L"Warning", MB_ICONWARNING | MB_YESNO | MB_TOPMOST | MB_SETFOREGROUND);
 
 		if (Result == IDNO)
-		{
-			FreeLibrary(PluginModule);
-			return nullptr;
-		}
-	}
-
-	if (lpPluginGetName)
-	{
-		// get name and check for list
-		std::string pluginName = lpPluginGetName();
-		if (!ModuleAllowed(pluginName))
 		{
 			FreeLibrary(PluginModule);
 			return nullptr;
