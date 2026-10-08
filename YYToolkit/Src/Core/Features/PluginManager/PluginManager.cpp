@@ -261,16 +261,32 @@ void API::PluginManager::Initialize()
 	if (!fs::is_directory(Path))
 		return;
 
+	auto TryLoadPlugin = [](const fs::path& PluginPath)
+	{
+		if (YYTKPlugin* p = LoadPlugin(PluginPath.wstring().c_str()))
+			Utils::Logging::Message(CLR_GREEN, "[+] Loaded '%S' - mapped to 0x%p.", PluginPath.filename().wstring().c_str(), p->PluginStart);
+		else
+			Utils::Logging::Message(CLR_RED, "[-] Did not load '%S'.", PluginPath.filename().wstring().c_str());
+	};
+
+	// The callback core is a special mod other mods depend on, so it has to be loaded first (if present)
+	const wchar_t* CallbackCoreName = L"LoopHeroCallbackCore.dll";
+	fs::path CallbackCorePath = fs::path(Path) / CallbackCoreName;
+
+	if (fs::is_regular_file(CallbackCorePath))
+		TryLoadPlugin(CallbackCorePath);
+
 	for (auto& entry : fs::directory_iterator(Path))
 	{
 		if (entry.path().extension().wstring().find(L".dll") == std::wstring::npos)
 			continue;
 
+		// Already handled above
+		if (_wcsicmp(entry.path().filename().wstring().c_str(), CallbackCoreName) == 0)
+			continue;
+
 		// We have a DLL, try loading it
-		if (YYTKPlugin* p = LoadPlugin(entry.path().wstring().c_str()))
-			Utils::Logging::Message(CLR_GREEN, "[+] Loaded '%S' - mapped to 0x%p.", entry.path().filename().wstring().c_str(), p->PluginStart);
-		else
-			Utils::Logging::Message(CLR_RED, "[-] Did not load '%S'.", entry.path().filename().wstring().c_str());
+		TryLoadPlugin(entry.path());
 	}
 }
 
