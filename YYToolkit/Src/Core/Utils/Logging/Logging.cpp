@@ -10,15 +10,11 @@ namespace Utils::Logging
 	{
 		const static size_t MaxStringLength = 1024;
 
-		if (strlen(fmt) >= 1024)
-			Utils::Logging::Critical(__FILE__, __LINE__, "Buffer overflow attempted. Too long of a string sent to ParseVA.");
-
 		char Buf[MaxStringLength];
 		memset(Buf, 0, MaxStringLength);
 
-		strncpy_s(Buf, fmt, MaxStringLength);
-
-		vsprintf_s(Buf, fmt, Args);
+		// vsprintf_s terminates the process on overflow.
+		_vsnprintf_s(Buf, MaxStringLength, _TRUNCATE, fmt, Args);
 
 		return std::string(Buf);
 	}

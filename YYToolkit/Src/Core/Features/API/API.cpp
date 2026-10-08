@@ -109,6 +109,9 @@ bool API::CallBuiltin(YYRValue& Result, const std::string& Name, CInstance* Self
 		return false;
 	}
 	
+	// Builtins overwrite Result without freeing it.
+	Result = YYRValue();
+
 	// The only C-style casts in this API, since the C++ equivalent is awfully long.
 	// reinterpret_cast<RValue*>(const_cast<YYRValue*>(Args.data()));
 
@@ -163,7 +166,7 @@ void API::PrintMessage(Color color, const char* fmt, ...)
 	std::string Message = Utils::Logging::ParseVA(fmt, vaArgs);
 	va_end(vaArgs);
 
-	return Utils::Logging::Message(color, Message.c_str());
+	return Utils::Logging::Message(color, "%s", Message.c_str());
 }
 
 void API::PrintMessageNoNewline(Color color, const char* fmt, ...)
@@ -173,7 +176,7 @@ void API::PrintMessageNoNewline(Color color, const char* fmt, ...)
 	std::string Message = Utils::Logging::ParseVA(fmt, vaArgs);
 	va_end(vaArgs);
 
-	return Utils::Logging::NoNewlineMessage(color, Message.c_str());
+	return Utils::Logging::NoNewlineMessage(color, "%s", Message.c_str());
 }
 
 void API::PrintError(const char* File, const int& Line, const char* fmt, ...)
@@ -183,5 +186,5 @@ void API::PrintError(const char* File, const int& Line, const char* fmt, ...)
 	std::string Message = Utils::Logging::ParseVA(fmt, vaArgs);
 	va_end(vaArgs);
 
-	return Utils::Logging::Error(File, Line, Message.c_str());
+	return Utils::Logging::Error(File, Line, "%s", Message.c_str());
 }
