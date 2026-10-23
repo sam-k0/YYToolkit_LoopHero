@@ -1,6 +1,7 @@
 #include "WindowProc.hpp"
 #include "../../Utils/Logging/Logging.hpp"
 #include "../../Features/API/API.hpp"
+#include "../../Features/API/Internal.hpp"
 #include "../../Features/PluginManager/PluginManager.hpp"
 #include "../../SDK/Plugins/YYTKEvent/YYTKEvent.hpp"
 
@@ -12,6 +13,10 @@ namespace Hooks
 		{
 			if (Msg == WM_CLOSE)
 				exit(0);
+
+			// F11 toggles the console (bit 30 of lParam is set on auto-repeat)
+			if (Msg == WM_KEYDOWN && w == VK_F11 && !(l & (1 << 30)))
+				API::Internal::__ToggleConsole__();
 
 			YYTKWindowProcEvent Event = YYTKWindowProcEvent(pfnOriginal, hwnd, Msg, w, l);
 			API::PluginManager::RunHooks(&Event);

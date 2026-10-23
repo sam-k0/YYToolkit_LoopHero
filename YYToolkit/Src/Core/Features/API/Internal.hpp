@@ -34,6 +34,9 @@ namespace API
 		// Opens up the console and prints the version to it
 		YYTKStatus __InitializeConsole__();
 
+		// Shows / hides the console and saves the choice to options.ini
+		YYTKStatus __ToggleConsole__();
+
 		YYTKStatus __Unload__();
 
 		// MEMORY MANAGER FUNCTIONS

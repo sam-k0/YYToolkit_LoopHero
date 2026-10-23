@@ -96,6 +96,29 @@ YYTKStatus API::Internal::__InitializeGlobalVars__()
 	return YYTK_OK;
 }
 
+// options.ini next to the game executable
+static std::string GetOptionsPath()
+{
+	char szPath[MAX_PATH] = { 0 };
+	GetModuleFileNameA(nullptr, szPath, MAX_PATH);
+
+	std::string sPath(szPath);
+	sPath.erase(sPath.find_last_of("\\/") + 1);
+
+	return sPath + "options.ini";
+}
+
+YYTKStatus API::Internal::__ToggleConsole__()
+{
+	HWND hConsole = GetConsoleWindow();
+	bool bShow = !IsWindowVisible(hConsole);
+
+	ShowWindow(hConsole, bShow ? SW_SHOWNA : SW_HIDE);
+	WritePrivateProfileStringA("YYTK", "ConsoleVisible", bShow ? "1" : "0", GetOptionsPath().c_str());
+
+	return YYTK_OK;
+}
+
 YYTKStatus API::Internal::__InitializeConsole__()
 {
 	AllocConsole();
@@ -120,6 +143,9 @@ YYTKStatus API::Internal::__InitializeConsole__()
 	GetConsoleMode(hInput, &dwMode);
 	SetConsoleMode(hInput, ENABLE_EXTENDED_FLAGS | (dwMode & ~ENABLE_QUICK_EDIT_MODE));
 
+	// Restore the visibility saved by __ToggleConsole__
+	if (!GetPrivateProfileIntA("YYTK", "ConsoleVisible", 1, GetOptionsPath().c_str()))
+		ShowWindow(GetConsoleWindow(), SW_HIDE);
 
 #if _DEBUG
 	Utils::Logging::Message(CLR_GOLD, "YYToolkit %s (Debug) by @archie_uwu, forked by sam-k0", YYSDK_VERSION);
