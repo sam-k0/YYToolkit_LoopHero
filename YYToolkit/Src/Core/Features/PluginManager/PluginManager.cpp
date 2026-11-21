@@ -12,7 +12,6 @@
 
 
 std::map<std::string, YYTKPlugin*> gRegisteredPlugins;
-const std::string gModBlacklist = "DisabledMods.meta";
 
 
 bool VectorContains(std::string find, std::vector<std::string>* v)

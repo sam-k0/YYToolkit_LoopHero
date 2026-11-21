@@ -1,0 +1,108 @@
+name: build-and-release
+
+on:
+  push:
+    branches: ["*"]
+
+jobs:
+  build:
+    name: Build (Release x86)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v3
+
+      - name: Build
+        shell: cmd
+        run: |
+          msbuild YYToolkit.sln /nologo /m /p:Configuration=Release /p:Platform=x86
+
+      - name: Locate DLL
+        id: dll
+        shell: pwsh
+        run: |
+          # Find the freshly built core DLL regardless of the exact output layout
+          # (the project sets OutDir to Build\Core\Release for Win32, but stay
+          # robust to layout changes).
+          # No .dll is checked into the repo, so the newest match is ours.
+          $dll = Get-ChildItem -Path . -Recurse -Filter YYToolkit.dll |
+                 Sort-Object LastWriteTime -Descending |
+                 Select-Object -First 1
+          if (-not $dll) { throw "YYToolkit.dll not found in build output" }
+          Write-Host "Found DLL: $($dll.FullName)"
+          "path=$($dll.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Upload DLL artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: YYToolkit
+          path: ${{ steps.dll.outputs.path }}
+
+  release:
+    name: Create release
+    needs: build
+    if: github.ref == 'refs/heads/stable'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download DLL artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: YYToolkit
+          path: release
+
+      - name: Fetch dinput8.dll from previous release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # The dinput8.dll launcher is a static binary, not built by this repo.
+          # Re-attach it by copying it from the most recent existing release
+          # (the new one doesn't exist yet, so "latest" is the previous one).
+          if ! gh release download --latest \
+              --pattern "dinput8.dll" \
+              --dir release; then
+            echo "dinput8.dll not found in any previous release" >&2
+            exit 1
+          fi
+          if [ ! -f release/dinput8.dll ]; then
+            echo "dinput8.dll not found in any previous release" >&2
+            exit 1
+          fi
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ github.sha }}
+        run: |
+          # Internal SDK version, as shown in the in-game banner
+          INTERNAL_VERSION=$(grep -oP '(?<=YYSDK_VERSION = ")[0-9]+\.[0-9]+\.[0-9]+' \
+            "YYToolkit/Src/Core/SDK/FwdDecls/FwdDecls.hpp")
+          if [ -z "${INTERNAL_VERSION}" ]; then
+            echo "Could not read YYSDK_VERSION from FwdDecls.hpp" >&2
+            exit 1
+          fi
+          DATE=$(date -u +%Y.%m.%d)
+          TAG="v.${DATE}"
+          # Multiple builds per day: append -1, -2, ... until the tag is free
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+            N=1
+            while gh release view "${TAG}-${N}" >/dev/null 2>&1; do
+              N=$((N+1))
+            done
+            TAG="${TAG}-${N}"
+          fi
+          gh release create "${TAG}" \
+            --target "${VERSION}" \
+            --title "Release ${DATE}" \
+            --notes "Automated build of YYToolkit for commit ${VERSION:0:7}
+              Internal version: v${INTERNAL_VERSION}" \
+            --latest \
+            "release/YYToolkit.dll" \
+            "release/dinput8.dll"
