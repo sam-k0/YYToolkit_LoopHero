@@ -64,11 +64,16 @@ jobs:
         run: |
           # The dinput8.dll launcher is a static binary, not built by this repo.
           # Re-attach it by copying it from the most recent existing release
-          # (the new one doesn't exist yet, so "latest" is the previous one).
-          if ! gh release download --latest \
+          # (the new one doesn't exist yet, so the latest is the previous one).
+          LATEST_TAG=$(gh release list -L 1 --json tagName --jq '.[0].tagName')
+          if [ -z "${LATEST_TAG}" ]; then
+            echo "No previous release found to fetch dinput8.dll from" >&2
+            exit 1
+          fi
+          if ! gh release download "${LATEST_TAG}" \
               --pattern "dinput8.dll" \
               --dir release; then
-            echo "dinput8.dll not found in any previous release" >&2
+            echo "dinput8.dll not found in release ${LATEST_TAG}" >&2
             exit 1
           fi
           if [ ! -f release/dinput8.dll ]; then
